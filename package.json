@@ -1,0 +1,52 @@
+{
+  "name": "action-doxygencheck",
+  "version": "0.0.1",
+  "description": "GitHub Action for doc check",
+  "main": "lib/main.js",
+  "scripts": {
+    "test": "jest",
+    "build": "ncc build ./src/main.ts -o ./lib -m && mv ./lib/index.js ./lib/main.js",
+    "buildAndAdd": "npm run build && git add ."
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run buildAndAdd"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsic404/action-dxoygencheck.git"
+  },
+  "keywords": [
+    "actions",
+    "node",
+    "setup",
+    "doc",
+    "doxygen"
+  ],
+  "dependencies": {
+    "@actions/core": "^1.9.1",
+    "@actions/github": "^4.0.0",
+    "@octokit/auth-app": "^4.0.2",
+    "@octokit/core": "^4.0.2",
+    "@octokit/rest": "^18.12.0",
+    "actions-toolkit": "^2.1.0",
+    "diff": "^5.1.0",
+    "husky": "^4.3.0",
+    "lodash": "^4.17.21",
+    "node-fetch": "^3.1.1"
+  },
+  "devDependencies": {
+    "@octokit/types": "5.0.1",
+    "@types/node": "^12.0.4",
+    "@zeit/ncc": "^0.21.1",
+    "ts-jest": "^24.2.0",
+    "typescript": "^3.8.3"
+  },
+  "author": "ibakshay",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/tsic404/action-dxoygencheck/issues"
+  },
+  "homepage": "https://github.com/tsic404/action-doxygencheck#readme"
+}

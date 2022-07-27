@@ -1,0 +1,100 @@
+name: "Document check"
+description: "An action to check document"
+author: "tsic404"
+branding:
+  icon: "award"
+  color: blue
+
+inputs:
+  pullRequestId:
+    description: "pull request id"
+    required: true
+  checkKind:
+    description: "kind to check"
+    required: false
+    default: "all"
+  checkScope:
+    description: "comma-separated list of item scopes to include"
+    require: false
+    default: "public"
+  checkedSuffix:
+    description: "which file suffix will be checked"
+    require: true
+    default: ".cpp,.h,.c,.hpp,.cxx,.hxx"
+  installDepends:
+    description: "install all build depends"
+    required: false
+    default: false
+  installCoverxygen:
+    description: "install coverxygen"
+    required: false
+    default: true
+  installDoxygen:
+    description: "install doxygen"
+    required: false
+    default: true
+  setFailed:
+    description: "set action failed or not while can't pass check"
+    require: false
+    default: true
+  genDocCommand:
+    description: "command to gen document"
+    required: false
+    default: |
+      cmake -Bbuild -DDOXYGEN_GENERATE_XML=1 .
+      cmake --build build --target doxygen
+      python3 -m coverxygen --xml-dir=./build/docs/xml --src-dir . --format json --kind $CHECK_KIND --scope $CHECK_SCOPE --output $CHECK_RES
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: get env
+      shell: bash
+      run: |
+        export
+
+    - name: install doxygen
+      if: inputs.installDoxygen == 'true'
+      shell: bash
+      run: |
+        sudo apt-get install -y --force-yes doxygen
+
+    - name: install coverxygen
+      if: inputs.installCoverxygen == 'true'
+      shell: bash
+      run: |
+        sudo apt-get install -y --force-yes python3-pip
+        pip3 install coverxygen
+
+    - name: install build depends
+      if: inputs.installDepends == 'true'
+      shell: bash
+      run: |
+        sudo apt-get install -y --force-yes devscripts
+        mk-build-deps
+        sudo apt-get install -y --force-yes ./*.deb
+
+    - name: gen doc
+      shell: bash
+      run: |
+        export CHECK_RES=`[[ x$CHECK_RES != x ]] && echo $CHECK_RES || echo doxygen_check_file.json`
+        ${{inputs.genDocCommand}}
+      env:
+        CHECK_KIND:  ${{ inputs.checkKind }}
+        CHECK_SCOPE: ${{ inputs.checkScope }}
+
+    - name: setup node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+
+    - name: check doc
+      shell: bash
+      run: |
+        export CHECK_RES=`[[ x$CHECK_RES != x ]] && echo $CHECK_RES || echo doxygen_check_file.json`
+        node $GITHUB_ACTION_PATH/lib/main.js
+      env:
+        PR_ID: ${{ inputs.pullRequestId }}
+        INPUT_CHECKEDSUFFIX: ${{ inputs.checkedSuffix }}
+        INPUT_SETFAILED: ${{ inputs.setFailed }}
