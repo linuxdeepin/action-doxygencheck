@@ -1,4 +1,3 @@
-import { context } from "@actions/github";
 import { getOctokitClient } from "./octkit";
 import * as core from '@actions/core'
 import { exportSummary } from "./action/summary";
@@ -36,7 +35,12 @@ export async function getCheckResult(): Promise<Array<string[3]>> {
 
     diffs.forEach(file => {
         // foreach changed file
-        const filename = file.newFileName.slice(2)
+        var filename
+        try {
+            filename = file.newFileName.slice(2)
+        } catch (error) {
+            return
+        }
         if (needCheck(filename)) {
             file.hunks.forEach(line => {
                 // foreach file changed line
