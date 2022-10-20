@@ -64,14 +64,14 @@ runs:
       if: inputs.installCoverxygen == 'true'
       shell: bash
       run: |
-        sudo apt-get install -y --force-yes python3-pip python3-setuptools
+        sudo apt-get install -y --force-yes python3-pip python3-setuptools python3-wheel
         sudo pip3 install coverxygen
 
     - name: install build depends
       if: inputs.installDepends == 'true'
       shell: bash
       run: |
-        sudo apt-get install -y --force-yes devscripts
+        sudo apt-get install -y --force-yes devscripts equivs
         mk-build-deps
         sudo apt-get install -y --force-yes ./*.deb
 
