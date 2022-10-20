@@ -64,7 +64,7 @@ runs:
       if: inputs.installCoverxygen == 'true'
       shell: bash
       run: |
-        sudo apt-get install -y --force-yes python3-pip
+        sudo apt-get install -y --force-yes python3-pip python3-setuptools
         sudo pip3 install coverxygen
 
     - name: install build depends
