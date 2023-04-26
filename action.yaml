@@ -79,6 +79,7 @@ runs:
       shell: bash
       run: |
         export CHECK_RES=`[[ x$CHECK_RES != x ]] && echo $CHECK_RES || echo doxygen_check_file.json`
+        export PYTHONPATH=/usr/lib/python3.10/site-packages/:$PYTHONPATH
         ${{inputs.genDocCommand}}
       env:
         CHECK_KIND:  ${{ inputs.checkKind }}
