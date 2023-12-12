@@ -65,7 +65,7 @@ runs:
       shell: bash
       run: |
         sudo apt-get install -y --force-yes python3-pip python3-setuptools python3-wheel
-        pip3 install coverxygen
+        pip3 install coverxygen --break-system-package
 
     - name: install build depends
       if: inputs.installDepends == 'true'
